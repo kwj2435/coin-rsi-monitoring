@@ -1,4 +1,10 @@
-package com.uijin.community.service;
+package com.uijin.coin.service;
+
+import static com.uijin.coin.model.constant.CoinConstant.CHAT_ID;
+import static com.uijin.coin.model.constant.CoinConstant.COIN_LIST;
+import static com.uijin.coin.model.constant.CoinConstant.RSI_DAY;
+import static com.uijin.coin.model.constant.CoinConstant.RSI_MAX_VALUE;
+import static com.uijin.coin.model.constant.CoinConstant.RSI_MIN_VALUE;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -8,7 +14,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONObject;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -17,29 +22,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class CoinService {
-  private final int RSI_DAY = 8;
-  private final int RSI_MAX_VALUE = 92;
-  private final int RSI_MIN_VALUE = 8;
-  private final String CHAT_ID = "6645481472";
-  private final List<String> coinSymbolList =
-      List.of(
-          "BLZ_USDT", "LINK_USDT", "LOOKS_USDT", "GAS_USDT",
-          "CYBER_USDT", "UNFI_USDT", "FTT_USDT", "STORJ_USDT",
-          "MASK_USDT", "1000PEPE2_USDT","MTL_USDT", "1000BONK_USDT", "TIP_USDT",
-          "TRB_USDT", "BTC_USDT", "SUSHI_USDT", "TURBO_USDT", "XMR_USDT", "SLP_USDT",
-          "TOMO_USDT", "BLUR_USDT", "HIFI_USDT", "RUNE_USDT", "WLD_USDT", "POLYX_USDT",
-          "POWR_USDT", "INJ_USDT", "TARA_USDT", "CAKE_USDT", "TWT_USDT", "HOT_USDT",
-          "CHZ_USDT", "FILECOIN_USDT", "LQTY_USDT", "FLOKI_USDT", "NEAR_USDT",
-          "SFP_USDT", "ENJ_USDT");
-
   @Scheduled(cron = "0 */2 * * * *")
   public void scheduler() throws InterruptedException {
     List<String> errorSymbol = new ArrayList<>();
     RestTemplate restTemplate = new RestTemplate();
     int errorCount = 0;
 
-    for(int i = 0 ; i<coinSymbolList.size() ; i++) {
-      String symbol = coinSymbolList.get(i);
+    for(int i = 0 ; i<COIN_LIST.size() ; i++) {
+      String symbol = COIN_LIST.get(i);
       if(i % 20 == 0) { Thread.sleep(1000); }
       try {
         if(checkRsi(symbol)) {
@@ -59,7 +49,7 @@ public class CoinService {
       }
     }
     String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd E HH:mm"));
-    System.out.println(time + " 전체 모니터링 갯수 [" + coinSymbolList.size() + "] - 오류 건수 [" + errorCount + "] - 오류 대상 코인 리스트 : " + errorSymbol  );
+    System.out.println(time + " 전체 모니터링 갯수 [" + COIN_LIST.size() + "] - 오류 건수 [" + errorCount + "] - 오류 대상 코인 리스트 : " + errorSymbol  );
   }
 
   public boolean checkRsi(String symbol) {
