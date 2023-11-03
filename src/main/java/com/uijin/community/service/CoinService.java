@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONObject;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -27,27 +29,37 @@ public class CoinService {
           "TRB_USDT", "BTC_USDT", "SUSHI_USDT", "TURBO_USDT", "XMR_USDT", "SLP_USDT",
           "TOMO_USDT", "BLUR_USDT", "HIFI_USDT", "RUNE_USDT", "WLD_USDT", "POLYX_USDT",
           "POWR_USDT", "INJ_USDT", "TARA_USDT", "CAKE_USDT", "TWT_USDT", "HOT_USDT",
-          "CHZ_USDT", "FILECOIN_USDT", "LQTY_USDT", "FLOKI_USDT");
+          "CHZ_USDT", "FILECOIN_USDT", "LQTY_USDT", "FLOKI_USDT", "NEAR_USDT",
+          "SFP_USDT", "ENJ_USDT");
 
   @Scheduled(cron = "0 */2 * * * *")
   public void scheduler() throws InterruptedException {
+    List<String> errorSymbol = new ArrayList<>();
     RestTemplate restTemplate = new RestTemplate();
-    System.out.println(LocalDateTime.now());
+    int errorCount = 0;
+
     for(int i = 0 ; i<coinSymbolList.size() ; i++) {
-      System.out.println(coinSymbolList.get(i));
+      String symbol = coinSymbolList.get(i);
       if(i % 20 == 0) { Thread.sleep(1000); }
-      if(checkRsi(coinSymbolList.get(i))) {
-        URI uri = UriComponentsBuilder
-            .fromUriString("https://api.telegram.org")
-            .path("bot6718525078:AAFBFUxW32Sw7luc-U0fOqh7dc4VKb4pDQk/sendmessage")
-            .queryParam("text", i+" - RSI 진입 시점")
-            .queryParam("chat_id", CHAT_ID)
-            .encode()
-            .build()
-            .toUri();
-        restTemplate.getForObject(uri, String.class);
+      try {
+        if(checkRsi(symbol)) {
+          URI uri = UriComponentsBuilder
+                  .fromUriString("https://api.telegram.org")
+                  .path("bot6718525078:AAFBFUxW32Sw7luc-U0fOqh7dc4VKb4pDQk/sendmessage")
+                  .queryParam("text", symbol+" - RSI 진입 시점")
+                  .queryParam("chat_id", CHAT_ID)
+                  .encode()
+                  .build()
+                  .toUri();
+          restTemplate.getForObject(uri, String.class);
+        }
+      } catch (Exception e) {
+        errorCount ++;
+        errorSymbol.add(symbol);
       }
     }
+    String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd E HH:mm"));
+    System.out.println(time + " 전체 모니터링 갯수 [" + coinSymbolList.size() + "] - 오류 건수 [" + errorCount + "] - 오류 대상 코인 리스트 : " + errorSymbol  );
   }
 
   public boolean checkRsi(String symbol) {
@@ -59,7 +71,7 @@ public class CoinService {
     RestTemplate restTemplate = new RestTemplate();
 
     long end = ZonedDateTime.now().toEpochSecond();
-    long start = ZonedDateTime.now().minusHours(8).toEpochSecond();
+    long start = ZonedDateTime.now().minusHours(7).toEpochSecond();
     URI uri = UriComponentsBuilder
         .fromUriString("https://contract.mexc.com")
         .path("api/v1/contract/kline/" + symbol).queryParam("interval", "Min5").queryParam("start", start).queryParam("end", end)
