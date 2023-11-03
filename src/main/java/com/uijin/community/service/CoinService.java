@@ -2,6 +2,7 @@ package com.uijin.community.service;
 
 import java.math.BigDecimal;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +24,17 @@ public class CoinService {
           "CYBER_USDT", "UNFI_USDT", "FTT_USDT", "STORJ_USDT",
           "MASK_USDT", "1000PEPE2_USDT","MTL_USDT", "1000BONK_USDT", "TIP_USDT",
           "TRB_USDT", "BTC_USDT", "SUSHI_USDT", "TURBO_USDT", "XMR_USDT", "SLP_USDT",
-          "TOMO_USDT", "POLYX_USDT");
+          "TOMO_USDT", "BLUR_USDT", "HIFI_USDT", "RUNE_USDT", "WLD_USDT", "POLYX_USDT",
+          "POWR_USDT", "INJ_USDT");
 
-  @Scheduled(cron = "0 */5 * * * *")
-  public void scheduler() {
+  @Scheduled(cron = "0 */2 * * * *")
+  public void scheduler() throws InterruptedException {
     RestTemplate restTemplate = new RestTemplate();
-    for(String i : coinSymbolList) {
-      if(checkRsi(i)) {
+    System.out.println(LocalDateTime.now());
+    for(int i = 0 ; i<coinSymbolList.size() ; i++) {
+      System.out.println(coinSymbolList.get(i));
+      if(i % 20 == 0) { Thread.sleep(1000); }
+      if(checkRsi(coinSymbolList.get(i))) {
         URI uri = UriComponentsBuilder
             .fromUriString("https://api.telegram.org")
             .path("bot6718525078:AAFBFUxW32Sw7luc-U0fOqh7dc4VKb4pDQk/sendmessage")
