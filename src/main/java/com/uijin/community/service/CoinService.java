@@ -27,7 +27,7 @@ public class CoinService {
           "TRB_USDT", "BTC_USDT", "SUSHI_USDT", "TURBO_USDT", "XMR_USDT", "SLP_USDT",
           "TOMO_USDT", "BLUR_USDT", "HIFI_USDT", "RUNE_USDT", "WLD_USDT", "POLYX_USDT",
           "POWR_USDT", "INJ_USDT", "TARA_USDT", "CAKE_USDT", "TWT_USDT", "HOT_USDT",
-          "CHZ_USDT", "FILECOIN_USDT");
+          "CHZ_USDT", "FILECOIN_USDT", "LQTY_USDT", "FLOKI_USDT");
 
   @Scheduled(cron = "0 */2 * * * *")
   public void scheduler() throws InterruptedException {
