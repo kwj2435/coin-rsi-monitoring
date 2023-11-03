@@ -16,7 +16,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class CoinService {
   private final int RSI_DAY = 8;
-  private final int RSI_VALUE = 93;
+  private final int RSI_MAX_VALUE = 92;
+  private final int RSI_MIN_VALUE = 8;
   private final String CHAT_ID = "6645481472";
   private final List<String> coinSymbolList =
       List.of(
@@ -25,7 +26,8 @@ public class CoinService {
           "MASK_USDT", "1000PEPE2_USDT","MTL_USDT", "1000BONK_USDT", "TIP_USDT",
           "TRB_USDT", "BTC_USDT", "SUSHI_USDT", "TURBO_USDT", "XMR_USDT", "SLP_USDT",
           "TOMO_USDT", "BLUR_USDT", "HIFI_USDT", "RUNE_USDT", "WLD_USDT", "POLYX_USDT",
-          "POWR_USDT", "INJ_USDT");
+          "POWR_USDT", "INJ_USDT", "TARA_USDT", "CAKE_USDT", "TWT_USDT", "HOT_USDT",
+          "CHZ_USDT", "FILECOIN_USDT");
 
   @Scheduled(cron = "0 */2 * * * *")
   public void scheduler() throws InterruptedException {
@@ -38,7 +40,7 @@ public class CoinService {
         URI uri = UriComponentsBuilder
             .fromUriString("https://api.telegram.org")
             .path("bot6718525078:AAFBFUxW32Sw7luc-U0fOqh7dc4VKb4pDQk/sendmessage")
-            .queryParam("text", i+" - RSI 지수 " + RSI_VALUE +"돌파")
+            .queryParam("text", i+" - RSI 진입 시점")
             .queryParam("chat_id", CHAT_ID)
             .encode()
             .build()
@@ -49,10 +51,11 @@ public class CoinService {
   }
 
   public boolean checkRsi(String symbol) {
-    return getRsiByMinutes(symbol) > RSI_VALUE;
+    double rsi = getRsiByMinutes(symbol);
+    return rsi > RSI_MAX_VALUE || rsi < RSI_MIN_VALUE;
   }
 
-  private Double getRsiByMinutes(String symbol) {
+  private double getRsiByMinutes(String symbol) {
     RestTemplate restTemplate = new RestTemplate();
 
     long end = ZonedDateTime.now().toEpochSecond();
@@ -77,7 +80,7 @@ public class CoinService {
     }
 
     if (CollectionUtils.isEmpty(candleResList)) {
-      return null;
+      throw new IllegalArgumentException("데이터가 존재하지 않습니다 : " + symbol);
     }
 
     // 지수 이동 평균은 과거 데이터부터 구해주어야 합니다.
