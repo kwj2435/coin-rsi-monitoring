@@ -3,9 +3,8 @@ package com.uijin.coin.service;
 import static com.uijin.coin.model.constant.CoinConstant.CHAT_ID;
 import static com.uijin.coin.model.constant.CoinConstant.COIN_LIST;
 import static com.uijin.coin.model.constant.CoinConstant.RSI_DAY;
-import static com.uijin.coin.model.constant.CoinConstant.RSI_MAX_VALUE;
-import static com.uijin.coin.model.constant.CoinConstant.RSI_MIN_VALUE;
 
+import com.uijin.coin.model.RsiResult;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -22,7 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class CoinService {
-  @Scheduled(cron = "0 */2 * * * *")
+  @Scheduled(cron = "0 */1 * * * *")
   public void scheduler() throws InterruptedException {
     List<String> errorSymbol = new ArrayList<>();
     RestTemplate restTemplate = new RestTemplate();
@@ -32,11 +31,14 @@ public class CoinService {
       String symbol = COIN_LIST.get(i);
       if(i % 20 == 0) { Thread.sleep(1000); }
       try {
-        if(checkRsi(symbol)) {
+        RsiResult rsiResult = checkRsi(symbol);
+        if(rsiResult.isTargetAlert()) {
           URI uri = UriComponentsBuilder
                   .fromUriString("https://api.telegram.org")
                   .path("bot6718525078:AAFBFUxW32Sw7luc-U0fOqh7dc4VKb4pDQk/sendmessage")
-                  .queryParam("text", symbol+" - RSI 진입 시점")
+                  .queryParam(
+                      "text",
+                      symbol+" - RSI 진입 시점(Rsi : " + String.format("%.2f", rsiResult.getRsi()) + ")")
                   .queryParam("chat_id", CHAT_ID)
                   .encode()
                   .build()
@@ -52,9 +54,9 @@ public class CoinService {
     System.out.println(time + " 전체 모니터링 갯수 [" + COIN_LIST.size() + "] - 오류 건수 [" + errorCount + "] - 오류 대상 코인 리스트 : " + errorSymbol  );
   }
 
-  public boolean checkRsi(String symbol) {
+  public RsiResult checkRsi(String symbol) {
     double rsi = getRsiByMinutes(symbol);
-    return rsi > RSI_MAX_VALUE || rsi < RSI_MIN_VALUE;
+    return RsiResult.create(rsi);
   }
 
   private double getRsiByMinutes(String symbol) {
