@@ -6,7 +6,7 @@ public class CoinConstant {
     // RSI 계산 주기
     public static final int RSI_DAY = 8;
     // RSI 과매수 알림 수치
-    public static final int RSI_MAX_VALUE = 10;
+    public static final int RSI_MAX_VALUE = 89;
     // RSI 과매도 알림 수치
     public static final int RSI_MIN_VALUE = 9;
 
@@ -24,6 +24,6 @@ public class CoinConstant {
             "POWR_USDT", "INJ_USDT", "TARA_USDT", "CAKE_USDT", "TWT_USDT", "HOT_USDT",
             "CHZ_USDT", "FILECOIN_USDT", "LQTY_USDT", "FLOKI_USDT", "NEAR_USDT",
             "SFP_USDT", "ENJ_USDT", "CORE_USDT", "KAS_USDT", "WEMIX_USDT", "ARK_USDT",
-            "NEO_USDT", "KSM_USDT", "IMX_USDT", "XVS_USDT"
+            "NEO_USDT", "KSM_USDT", "IMX_USDT", "XVS_USDT", "UNI_USDT"
             );
 }

@@ -26,11 +26,11 @@ public class CoinService {
   Map<String, Integer> alertHistory = new HashMap<>();
 
   private boolean checkAlertHistory(String symbol) {
-    if(alertHistory.isEmpty()) {
+    if(alertHistory.get(symbol) == null) {
       alertHistory.put(symbol, 1);
       return true;
     }
-    if(alertHistory.get(symbol) == 4) {
+    if(alertHistory.get(symbol) == 2) {
       alertHistory.remove(symbol);
       return false;
     }
@@ -38,7 +38,7 @@ public class CoinService {
     return false;
   }
 
-  @Scheduled(cron = "0 */2 * * * *")
+  @Scheduled(cron = "0 */1 * * * *")
   public void scheduler() throws InterruptedException {
     List<String> errorSymbol = new ArrayList<>();
     RestTemplate restTemplate = new RestTemplate();
