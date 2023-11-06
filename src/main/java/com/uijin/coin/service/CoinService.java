@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.json.JSONObject;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -21,10 +23,26 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class CoinService {
-  @Scheduled(cron = "0 */1 * * * *")
+  Map<String, Integer> alertHistory = new HashMap<>();
+
+  private boolean checkAlertHistory(String symbol) {
+    if(alertHistory.isEmpty()) {
+      alertHistory.put(symbol, 1);
+      return true;
+    }
+    if(alertHistory.get(symbol) == 4) {
+      alertHistory.remove(symbol);
+      return false;
+    }
+    alertHistory.put(symbol, alertHistory.get(symbol) + 1);
+    return false;
+  }
+
+  @Scheduled(cron = "0 */2 * * * *")
   public void scheduler() throws InterruptedException {
     List<String> errorSymbol = new ArrayList<>();
     RestTemplate restTemplate = new RestTemplate();
+
     int errorCount = 0;
 
     for(int i = 0 ; i<COIN_LIST.size() ; i++) {
@@ -33,25 +51,30 @@ public class CoinService {
       try {
         RsiResult rsiResult = checkRsi(symbol);
         if(rsiResult.isTargetAlert()) {
-          URI uri = UriComponentsBuilder
-                  .fromUriString("https://api.telegram.org")
-                  .path("bot6718525078:AAFBFUxW32Sw7luc-U0fOqh7dc4VKb4pDQk/sendmessage")
-                  .queryParam(
-                      "text",
-                      symbol+" - RSI 진입 시점(Rsi : " + String.format("%.2f", rsiResult.getRsi()) + ")")
-                  .queryParam("chat_id", CHAT_ID)
-                  .encode()
-                  .build()
-                  .toUri();
-          restTemplate.getForObject(uri, String.class);
+          if(checkAlertHistory(symbol)) {
+            URI uri = UriComponentsBuilder
+                .fromUriString("https://api.telegram.org")
+                .path("bot6718525078:AAFBFUxW32Sw7luc-U0fOqh7dc4VKb4pDQk/sendmessage")
+                .queryParam(
+                    "text",
+                    symbol + " - RSI 진입 시점(Rsi : " + String.format("%.2f", rsiResult.getRsi())
+                        + ")")
+                .queryParam("chat_id", CHAT_ID)
+                .encode()
+                .build()
+                .toUri();
+            restTemplate.getForObject(uri, String.class);
+          }
         }
       } catch (Exception e) {
         errorCount ++;
         errorSymbol.add(symbol);
       }
     }
-    String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd E HH:mm"));
-    System.out.println(time + " 전체 모니터링 갯수 [" + COIN_LIST.size() + "] - 오류 건수 [" + errorCount + "] - 오류 대상 코인 리스트 : " + errorSymbol  );
+    String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd E HH:mm"));
+    System.out.println(
+        time + " 전체 모니터링 갯수 [" + COIN_LIST.size() + "] - 오류 건수 [" + errorCount + "] - 오류 대상 코인 리스트 : " + errorSymbol
+    );
   }
 
   public RsiResult checkRsi(String symbol) {
@@ -61,12 +84,14 @@ public class CoinService {
 
   private double getRsiByMinutes(String symbol) {
     RestTemplate restTemplate = new RestTemplate();
-
     long end = ZonedDateTime.now().toEpochSecond();
     long start = ZonedDateTime.now().minusHours(7).toEpochSecond();
     URI uri = UriComponentsBuilder
         .fromUriString("https://contract.mexc.com")
-        .path("api/v1/contract/kline/" + symbol).queryParam("interval", "Min5").queryParam("start", start).queryParam("end", end)
+        .path("api/v1/contract/kline/" + symbol)
+        .queryParam("interval", "Min5")
+        .queryParam("start", start)
+        .queryParam("end", end)
         .encode()
         .build()
         .toUri();
@@ -75,6 +100,7 @@ public class CoinService {
     JSONObject jsonObject1 = new JSONObject(jsonObject.get("data").toString());
     List<Object> close = jsonObject1.getJSONArray("close").toList();
     List<Double> candleResList = new ArrayList<>();
+
     for(Object i : close) {
       if(i.getClass().getName().equals("java.math.BigDecimal")) {
         candleResList.add(((BigDecimal)i).doubleValue());
