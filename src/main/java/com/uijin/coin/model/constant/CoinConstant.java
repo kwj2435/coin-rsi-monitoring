@@ -24,6 +24,7 @@ public class CoinConstant {
             "POWR_USDT", "INJ_USDT", "TARA_USDT", "CAKE_USDT", "TWT_USDT", "HOT_USDT",
             "CHZ_USDT", "FILECOIN_USDT", "LQTY_USDT", "FLOKI_USDT", "NEAR_USDT",
             "SFP_USDT", "ENJ_USDT", "CORE_USDT", "KAS_USDT", "WEMIX_USDT", "ARK_USDT",
-            "NEO_USDT", "KSM_USDT", "IMX_USDT", "XVS_USDT", "UNI_USDT"
+            "NEO_USDT", "KSM_USDT", "IMX_USDT", "XVS_USDT", "UNI_USDT", "AMB_USDT",
+                "C98_USDT", "BOND_USDT"
             );
 }
