@@ -1,8 +1,11 @@
 package com.uijin.coin.service;
 
+import static com.uijin.coin.model.CoinConfigData.ALERT_IGNORE_CYCLE;
+import static com.uijin.coin.model.CoinConfigData.MAXC_API_CALL_SLEEP_VALUE;
+import static com.uijin.coin.model.CoinConfigData.RSI_DAY;
 import static com.uijin.coin.model.constant.CoinConstant.CHAT_ID;
 import static com.uijin.coin.model.constant.CoinConstant.COIN_LIST;
-import static com.uijin.coin.model.constant.CoinConstant.RSI_DAY;
+import static com.uijin.coin.model.constant.CoinConstant.CRON_CYCLE;
 
 import com.uijin.coin.model.RsiResult;
 import java.math.BigDecimal;
@@ -30,7 +33,7 @@ public class CoinService {
       alertHistory.put(symbol, 1);
       return true;
     }
-    if(alertHistory.get(symbol) == 2) {
+    if(alertHistory.get(symbol) == ALERT_IGNORE_CYCLE) {
       alertHistory.remove(symbol);
       return false;
     }
@@ -38,7 +41,7 @@ public class CoinService {
     return false;
   }
 
-  @Scheduled(cron = "0 */1 * * * *")
+  @Scheduled(cron = CRON_CYCLE)
   public void scheduler() throws InterruptedException {
     List<String> errorSymbol = new ArrayList<>();
     RestTemplate restTemplate = new RestTemplate();
@@ -47,7 +50,7 @@ public class CoinService {
 
     for(int i = 0 ; i<COIN_LIST.size() ; i++) {
       String symbol = COIN_LIST.get(i);
-      if(i % 20 == 0) { Thread.sleep(1000); }
+      if(i % 15 == 0) { Thread.sleep(MAXC_API_CALL_SLEEP_VALUE); }
       try {
         RsiResult rsiResult = checkRsi(symbol);
         if(rsiResult.isTargetAlert()) {

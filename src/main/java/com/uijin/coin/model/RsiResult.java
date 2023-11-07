@@ -1,7 +1,7 @@
 package com.uijin.coin.model;
 
-import static com.uijin.coin.model.constant.CoinConstant.RSI_MAX_VALUE;
-import static com.uijin.coin.model.constant.CoinConstant.RSI_MIN_VALUE;
+import static com.uijin.coin.model.CoinConfigData.RSI_MAX_VALUE;
+import static com.uijin.coin.model.CoinConfigData.RSI_MIN_VALUE;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
