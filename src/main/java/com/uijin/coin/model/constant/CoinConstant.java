@@ -22,7 +22,7 @@ public class CoinConstant {
                     "WEMIX_USDT", "ARK_USDT", "NEO_USDT", "KSM_USDT", "IMX_USDT",
                     "XVS_USDT", "UNI_USDT", "AMB_USDT", "C98_USDT", "BOND_USDT",
                     "ZEN_USDT", "ONT_USDT", "MATIC_USDT", "XRP_USDT", "TOKEN_USDT",
-                    "GLMR_USDT", "SUI_USDT"
+                    "GLMR_USDT", "SUI_USDT", "FLR_USDT"
             );
 
 //     모니터링 중지 코인
