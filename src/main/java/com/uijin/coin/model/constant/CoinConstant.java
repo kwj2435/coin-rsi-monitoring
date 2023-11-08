@@ -14,13 +14,16 @@ public class CoinConstant {
             "BLZ_USDT", "LINK_USDT", "LOOKS_USDT", "GAS_USDT", "CYBER_USDT",
                     "UNFI_USDT", "FTT_USDT", "STORJ_USDT", "MASK_USDT", "1000PEPE2_USDT",
                     "MTL_USDT", "1000BONK_USDT", "TIP_USDT", "TRB_USDT", "BTC_USDT",
-                    "SUSHI_USDT", "TURBO_USDT", "XMR_USDT", "SLP_USDT", "TOMO_USDT",
+                    "SUSHI_USDT", "XMR_USDT", "SLP_USDT", "TOMO_USDT", "MULTI_USDT",
                     "BLUR_USDT", "HIFI_USDT", "RUNE_USDT", "WLD_USDT", "POLYX_USDT",
-                    "POWR_USDT", "INJ_USDT", "TARA_USDT", "CAKE_USDT", "TWT_USDT",
+                    "POWR_USDT", "INJ_USDT", "CAKE_USDT", "TWT_USDT", "XCN_USDT",
                     "HOT_USDT", "CHZ_USDT", "FILECOIN_USDT", "LQTY_USDT", "FLOKI_USDT",
                     "NEAR_USDT", "SFP_USDT", "ENJ_USDT", "CORE_USDT", "KAS_USDT",
                     "WEMIX_USDT", "ARK_USDT", "NEO_USDT", "KSM_USDT", "IMX_USDT",
                     "XVS_USDT", "UNI_USDT", "AMB_USDT", "C98_USDT", "BOND_USDT",
                     "ZEN_USDT", "ONT_USDT"
             );
+
+//     모니터링 중지 코인
+//    "TURBO_USDT", "TARA_USDT"
 }
