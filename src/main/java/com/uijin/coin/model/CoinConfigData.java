@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CoinConfigData {
     // RSI 계산 주기
-    public static int RSI_DAY = 8;
+    public static int RSI_DAY = 7;
     // RSI 과매수 알림 수치
     public static int RSI_MAX_VALUE = 89;
     // RSI 과매도 알림 수치
